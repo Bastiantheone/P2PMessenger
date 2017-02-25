@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_connection"
+    android:background="#FFFFFF"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="messenger.code5.p2pmessenger.ConnectionActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        android:theme="?attr/actionBarTheme"
+        android:elevation="5dp"
+        android:minHeight="?attr/actionBarSize"
+        android:id="@+id/toolbar"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
+        <TextView
+            android:text="P2P Messenger"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <ImageButton
+            android:src="@mipmap/menu_icon"
+            android:background="@color/colorPrimary"
+            android:layout_marginLeft="200dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp" />
+    </android.support.v7.widget.Toolbar>
+
+    <ImageButton
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="?attr/colorPrimary"
+        android:src="@mipmap/green_swirl"
+        android:id="@+id/imageButton4"
+        android:layout_marginStart="46dp"
+        android:layout_alignTop="@+id/imageButton3"
+        android:layout_toEndOf="@+id/imageButton2" />
+
+    <ImageButton
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="?attr/colorPrimary"
+        android:src="@mipmap/green_swirl"
+        android:layout_below="@+id/toolbar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="166dp"
+        android:id="@+id/imageButton6" />
+
+    <ImageButton
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="?attr/colorPrimary"
+        android:src="@mipmap/green_swirl"
+        android:layout_marginTop="34dp"
+        android:id="@+id/imageButton5"
+        android:layout_below="@+id/imageButton6"
+        android:layout_toEndOf="@+id/imageButton6"
+        android:layout_marginStart="11dp" />
+
+    <ImageButton
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="?attr/colorPrimary"
+        android:src="@mipmap/green_swirl"
+        android:id="@+id/imageButton2"
+        android:layout_marginEnd="40dp"
+        android:layout_alignBottom="@+id/imageButton5"
+        android:layout_toStartOf="@+id/imageButton6"
+        android:layout_marginBottom="10dp" />
+
+    <ImageButton
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="?attr/colorPrimary"
+        android:src="@mipmap/green_swirl"
+        android:id="@+id/imageButton3"
+        android:layout_marginBottom="79dp"
+        android:layout_alignBottom="@+id/imageButton6"
+        android:layout_alignStart="@+id/imageButton2" />
+
+    <ImageView
+        android:layout_width="10dp"
+        android:rotation="35"
+        app:srcCompat="@android:drawable/title_bar_tall"
+        android:id="@+id/imageView"
+        android:layout_height="150dp"
+        android:layout_marginBottom="47dp"
+        android:layout_alignBottom="@+id/imageButton2"
+        android:layout_toEndOf="@+id/imageButton6" />
+
+    <ImageView
+        android:layout_width="10dp"
+        android:rotation="-35"
+        app:srcCompat="@android:drawable/title_bar_tall"
+        android:id="@+id/imageView2"
+        android:layout_height="200dp"
+        android:layout_marginEnd="13dp"
+        android:layout_alignBottom="@+id/imageButton2"
+        android:layout_toStartOf="@+id/imageButton6"
+        android:layout_marginBottom="18dp" />
+
+    <ImageView
+        android:layout_width="10dp"
+        android:rotation="-35"
+        app:srcCompat="@android:drawable/title_bar_tall"
+        android:id="@+id/imageView4"
+        android:layout_height="200dp"
+        android:layout_below="@+id/imageButton4"
+        android:layout_alignStart="@+id/imageButton4" />
+
+    <ImageView
+        android:layout_width="10dp"
+        android:rotation="45"
+        app:srcCompat="@android:drawable/title_bar_tall"
+        android:id="@+id/imageView3"
+        android:layout_height="200dp"
+        android:layout_alignBottom="@+id/imageView4"
+        android:layout_alignStart="@+id/imageView2"
+        android:layout_marginBottom="16dp" />
+</RelativeLayout>
+
