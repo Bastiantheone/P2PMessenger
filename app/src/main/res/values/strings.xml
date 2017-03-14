@@ -5,4 +5,8 @@
     <string name="wifip2p_not_enabled">Wifi P2P is not enabled</string>
     <string name="failure">failure</string>
     <string name="success">success</string>
+    <string name="menu">Menu</string>
+    <string name="create_group">Create Group</string>
+    <string name="join_group">Join Group</string>
+    <string name="settings">Settings</string>
 </resources>
