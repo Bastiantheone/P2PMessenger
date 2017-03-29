@@ -24,6 +24,8 @@ import android.widget.Toast;
 import com.sababado.circularview.CircularView;
 import com.sababado.circularview.Marker;
 
+import java.lang.reflect.Method;
+
 public class ConnectionActivity extends AppCompatActivity {
     private WifiP2pManager mManager;
     private WifiP2pManager.Channel mChannel;
@@ -32,6 +34,7 @@ public class ConnectionActivity extends AppCompatActivity {
     private WifiP2pDevice[] p2pDevices;
     private LayoutInflater inflater;
     private ViewGroup parent;
+    public static WifiP2pDevice myDevice;
 
     private CircularView circularView;
     private Button discoverButton;
@@ -87,6 +90,7 @@ public class ConnectionActivity extends AppCompatActivity {
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()){
                             case R.id.create_group_option:
+                                createGroup();
                                 return true;
                             case R.id.join_group_option:
                                 return true;
@@ -98,6 +102,21 @@ public class ConnectionActivity extends AppCompatActivity {
                     }
                 });
                 menu.show();
+            }
+        });
+    }
+
+    //create a group
+    public void createGroup(){
+        mManager.createGroup(mChannel, new WifiP2pManager.ActionListener() {
+            @Override
+            public void onSuccess() {
+                Log.d("Test", "createGroup onSuccess: ");
+            }
+
+            @Override
+            public void onFailure(int i) {
+                Log.d("Test", "createGroup onFailure: ");
             }
         });
     }
@@ -127,12 +146,13 @@ public class ConnectionActivity extends AppCompatActivity {
         circularView.setOnCircularViewObjectClickListener(new CircularView.OnClickListener() {
             @Override
             public void onClick(CircularView view) {
-                Toast.makeText(getBaseContext(),"Clicked Center",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(),"This is you",Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onMarkerClick(CircularView view, Marker marker, int position) {
-                Toast.makeText(getBaseContext(),p2pDevices[position].deviceName,Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(),p2pDevices[position].deviceName+"\n"+
+                        p2pDevices[position].isGroupOwner(),Toast.LENGTH_SHORT).show();
             }
         });
 
