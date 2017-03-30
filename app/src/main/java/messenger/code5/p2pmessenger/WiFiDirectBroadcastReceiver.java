@@ -16,6 +16,8 @@ import android.widget.Toast;
 
 
 public class WiFiDirectBroadcastReceiver extends BroadcastReceiver{
+    private static final String TAG = "BroadcastReceiver";
+
     private WifiP2pManager manager;
     private WifiP2pManager.Channel channel;
     private ConnectionActivity connectionActivity;
@@ -40,11 +42,12 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver{
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        Log.d(TAG, "onReceive: ");
         if(ConnectionActivity.myDevice==null)ConnectionActivity.myDevice = intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_DEVICE);
         final String action = intent.getAction();
         if (WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION.equals(action)) {
             int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1);
-            Activity activity = null;
+            Activity activity;
             if(isConnectionActivity)activity = connectionActivity;
             else activity = joinGroupActivity;
             if (state == WifiP2pManager.WIFI_P2P_STATE_ENABLED) {
@@ -64,30 +67,12 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver{
                 manager.requestPeers(channel, new WifiP2pManager.PeerListListener() {
                     @Override
                     public void onPeersAvailable(WifiP2pDeviceList wifiP2pDeviceList) {
-                        Log.d("TEST", "onPeersAvailable: ");
+                        Log.d(TAG, "onPeersAvailable: ");
                         if(isConnectionActivity)connectionActivity.peersFound(wifiP2pDeviceList);
                         else joinGroupActivity.peersFound(wifiP2pDeviceList);
                     }
                 });
             }
         }
-    }
-
-    public void connectPeer(WifiP2pDevice device){
-        //obtain a peer from the WifiP2pDeviceList
-        WifiP2pConfig config = new WifiP2pConfig();
-        config.deviceAddress = device.deviceAddress;
-        manager.connect(channel, config, new WifiP2pManager.ActionListener() {
-
-            @Override
-            public void onSuccess() {
-                //success logic
-            }
-
-            @Override
-            public void onFailure(int reason) {
-                //failure logic
-            }
-        });
     }
 }

@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sababado.circularview.CircularView;
@@ -25,9 +26,11 @@ import com.sababado.circularview.Marker;
 
 import java.util.ArrayList;
 
-import static messenger.code5.p2pmessenger.ConnectionActivity.groupActionListener;
+import static messenger.code5.p2pmessenger.ConnectionActivity.myDevice;
 
 public class JoinGroupActivity extends AppCompatActivity {
+    private static final String TAG = "JoinGroupActivity";
+
     private WifiP2pManager mManager;
     private WifiP2pManager.Channel mChannel;
     private BroadcastReceiver mReceiver;
@@ -35,7 +38,6 @@ public class JoinGroupActivity extends AppCompatActivity {
     private WifiP2pDevice[] p2pDevices;
     private LayoutInflater inflater;
     private ViewGroup parent;
-    public static WifiP2pDevice myDevice;
 
     private CircularView circularView;
     private Button discoverButton;
@@ -60,6 +62,12 @@ public class JoinGroupActivity extends AppCompatActivity {
 
         inflater.inflate(R.layout.circular_view_layout,parent);
         circularView = (CircularView)findViewById(R.id.circular_view);
+
+        circularView.setAnimateMarkerOnStillHighlight(true);
+
+        TextView title = (TextView)findViewById(R.id.title_text_view);
+        String s = "P2PMessenger - Groups";
+        title.setText(s);
 
         discoverButton = (Button)findViewById(R.id.discover_button);
         discoverButton.setOnClickListener(new View.OnClickListener() {
@@ -91,8 +99,20 @@ public class JoinGroupActivity extends AppCompatActivity {
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()){
                             case R.id.create_group_option:
-                                if(!myDevice.isGroupOwner())
-                                mManager.createGroup(mChannel, groupActionListener);
+                                if(myDevice!=null&&!myDevice.isGroupOwner()) {
+                                    mManager.createGroup(mChannel, new WifiP2pManager.ActionListener() {
+                                        @Override
+                                        public void onSuccess() {
+                                            Log.d(TAG, "CreateGroup onSuccess: ");
+                                            Toast.makeText(getBaseContext(),"Created Group",Toast.LENGTH_SHORT).show();
+                                        }
+
+                                        @Override
+                                        public void onFailure(int reason) {
+                                            Log.d(TAG, "CreateGroup onFailure: "+reason);
+                                        }
+                                    });
+                                }
                                 return true;
                             case R.id.join_group_option:
                                 return true;
@@ -101,7 +121,18 @@ public class JoinGroupActivity extends AppCompatActivity {
                                 startActivity(intent);
                                 return true;
                             case R.id.remove_group_option:
-                                mManager.removeGroup(mChannel,groupActionListener);
+                                mManager.removeGroup(mChannel, new WifiP2pManager.ActionListener() {
+                                    @Override
+                                    public void onSuccess() {
+                                        Log.d(TAG, "RemoveGroup onSuccess: ");
+                                        Toast.makeText(getBaseContext(),"Removed Group",Toast.LENGTH_SHORT).show();
+                                    }
+
+                                    @Override
+                                    public void onFailure(int reason) {
+                                        Log.d(TAG, "RemoveGroup onFailure: "+reason);
+                                    }
+                                });
                                 return true;
                             case R.id.settings_option:
                                 return true;
@@ -111,21 +142,6 @@ public class JoinGroupActivity extends AppCompatActivity {
                     }
                 });
                 menu.show();
-            }
-        });
-    }
-
-    //create a group
-    public void createGroup(){
-        mManager.createGroup(mChannel, new WifiP2pManager.ActionListener() {
-            @Override
-            public void onSuccess() {
-                Log.d("Test", "createGroup onSuccess: ");
-            }
-
-            @Override
-            public void onFailure(int i) {
-                Log.d("Test", "createGroup onFailure: ");
             }
         });
     }
@@ -169,20 +185,21 @@ public class JoinGroupActivity extends AppCompatActivity {
                 if(!marker.isHighlighted()){
                     Toast.makeText(getBaseContext(),p2pDevices[position].deviceName+"\n"+
                             "click again to connect",Toast.LENGTH_SHORT).show();
-                    marker.animateBounce();
                     marker.setHighlighted(true);
+                    marker.animateBounce();
                 }else{
                     WifiP2pConfig config = new WifiP2pConfig();
                     config.deviceAddress = p2pDevices[position].deviceAddress;
                     mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
                         @Override
                         public void onSuccess() {
-                            Log.d("Test", "onSuccess: ");
+                            Log.d("Test", "Connect onSuccess: ");
+                            //open chat window here
                         }
 
                         @Override
-                        public void onFailure(int i) {
-                            Log.d("Test", "onFailure: ");
+                        public void onFailure(int reason) {
+                            Log.d("Test", "Connect onFailure: "+reason);
                         }
                     });
                 }

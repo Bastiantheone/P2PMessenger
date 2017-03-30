@@ -12,24 +12,25 @@ import com.sababado.circularview.SimpleCircularViewAdapter;
  */
 
 public class CircularViewAdapter extends SimpleCircularViewAdapter {
+    private static final String TAG = "CircularViewAdapter";
     private int size;
 
     public CircularViewAdapter(int size){
         super();
         this.size = size;
-        Log.d("TEST", "CircularViewAdapter: ");
+        Log.d(TAG, "CircularViewAdapter: ");
     }
 
 
     @Override
     public int getCount(){
-        Log.d("TEST", "getCount: "+size);
+        Log.d(TAG, "getCount: "+size);
         return size;
     }
 
     @Override
     public void setupMarker(final int position, final Marker marker){
-        Log.d("TEST", "setupMarker: ");
+        Log.d(TAG, "setupMarker: ");
         marker.setSrc(R.mipmap.green_swirl);
         marker.setFitToCircle(true);
         if(size<=30)marker.setRadius(80);

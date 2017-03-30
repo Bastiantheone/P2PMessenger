@@ -17,12 +17,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sababado.circularview.CircularView;
 import com.sababado.circularview.Marker;
 
 public class ConnectionActivity extends AppCompatActivity {
+    private static final String TAG = "ConnectionActivity";
+
     private WifiP2pManager mManager;
     private WifiP2pManager.Channel mChannel;
     private BroadcastReceiver mReceiver;
@@ -31,7 +34,6 @@ public class ConnectionActivity extends AppCompatActivity {
     private LayoutInflater inflater;
     private ViewGroup parent;
     public static WifiP2pDevice myDevice;
-    public static GroupActionListener groupActionListener;
 
     private CircularView circularView;
     private Button discoverButton;
@@ -57,7 +59,9 @@ public class ConnectionActivity extends AppCompatActivity {
         inflater.inflate(R.layout.circular_view_layout,parent);
         circularView = (CircularView)findViewById(R.id.circular_view);
 
-        if(groupActionListener == null)groupActionListener = new GroupActionListener();
+        TextView title = (TextView)findViewById(R.id.title_text_view);
+        String s = "P2PMessenger - Peers";
+        title.setText(s);
 
         discoverButton = (Button)findViewById(R.id.discover_button);
         discoverButton.setOnClickListener(new View.OnClickListener() {
@@ -89,8 +93,20 @@ public class ConnectionActivity extends AppCompatActivity {
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()){
                             case R.id.create_group_option:
-                                if(myDevice!=null&&!myDevice.isGroupOwner())
-                                mManager.createGroup(mChannel, groupActionListener);
+                                if(myDevice!=null&&!myDevice.isGroupOwner()) {
+                                    mManager.createGroup(mChannel, new WifiP2pManager.ActionListener() {
+                                        @Override
+                                        public void onSuccess() {
+                                            Log.d(TAG, "CreateGroup onSuccess: ");
+                                            Toast.makeText(getBaseContext(),"Created Group",Toast.LENGTH_SHORT).show();
+                                        }
+
+                                        @Override
+                                        public void onFailure(int reason) {
+                                            Log.d(TAG, "CreateGroup onFailure: "+reason);
+                                        }
+                                    });
+                                }
                                 return true;
                             case R.id.join_group_option:
                                 Intent intent = new Intent(getBaseContext(),JoinGroupActivity.class);
@@ -99,7 +115,18 @@ public class ConnectionActivity extends AppCompatActivity {
                             case R.id.show_peers_option:
                                 return true;
                             case R.id.remove_group_option:
-                                mManager.removeGroup(mChannel,groupActionListener);
+                                mManager.removeGroup(mChannel, new WifiP2pManager.ActionListener() {
+                                    @Override
+                                    public void onSuccess() {
+                                        Log.d(TAG, "RemoveGroup onSuccess: ");
+                                        Toast.makeText(getBaseContext(),"Removed Group",Toast.LENGTH_SHORT).show();
+                                    }
+
+                                    @Override
+                                    public void onFailure(int reason) {
+                                        Log.d(TAG, "RemoveGroup onFailure: "+reason);
+                                    }
+                                });
                                 return true;
                             case R.id.settings_option:
                                 return true;
@@ -143,8 +170,7 @@ public class ConnectionActivity extends AppCompatActivity {
 
             @Override
             public void onMarkerClick(CircularView view, Marker marker, int position) {
-                Toast.makeText(getBaseContext(),p2pDevices[position].deviceName+"\nGroup owner? "+
-                        p2pDevices[position].isGroupOwner(),Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(),p2pDevices[position].deviceName,Toast.LENGTH_SHORT).show();
             }
         });
 

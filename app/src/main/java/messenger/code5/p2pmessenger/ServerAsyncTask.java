@@ -16,6 +16,7 @@ import java.net.Socket;
  */
 
 public class ServerAsyncTask extends AsyncTask<Void, Void, String>{
+    private static final String TAG = "ServerAsyncTask";
     private Context context;
     private TextView statusText;
 
@@ -33,12 +34,14 @@ public class ServerAsyncTask extends AsyncTask<Void, Void, String>{
             InputStream inputStream = client.getInputStream();
             return inputStream.toString();
         }catch (IOException e){
+            Log.e(TAG, "doInBackground: ",e );
             return null;
         }
     }
 
     @Override
     protected void onPostExecute(String result){
+        Log.d(TAG, "onPostExecute: ");
         if(result!=null){
             //result contains the incoming message
         }
