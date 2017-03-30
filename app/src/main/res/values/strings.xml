@@ -8,5 +8,7 @@
     <string name="menu">Menu</string>
     <string name="create_group">Create Group</string>
     <string name="join_group">Join Group</string>
+    <string name="show_peers">Show Peers</string>
+    <string name="remove_group">Remove Group</string>
     <string name="settings">Settings</string>
 </resources>
