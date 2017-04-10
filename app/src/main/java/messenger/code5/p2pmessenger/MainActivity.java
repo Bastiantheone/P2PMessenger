@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity  {
 
         //start the async task to receive messages
         ServerAsyncTask server = new ServerAsyncTask(this);
+        server.execute();
 
         rvMessages = (RecyclerView) findViewById(R.id.rvMessages);
 
