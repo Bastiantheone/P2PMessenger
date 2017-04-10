@@ -1,4 +1,4 @@
-package com.example.troyb.messenger;
+package messenger.code5.p2pmessenger;
 
 import android.app.Activity;
 
@@ -33,16 +33,4 @@ public Message(String message){
                 this.color = color;
         }
 
-
-
-        private static int lastMsgId=0;
-        public static ArrayList<Message> createMessagesList(int numMessages) {
-                ArrayList<Message> messages = new ArrayList<Message>();
-
-                for (int i = 1; i <= numMessages; i++) {
-                        messages.add(new Message("Msg: " + ++lastMsgId));
-                }
-
-                return messages;
-        }
 }

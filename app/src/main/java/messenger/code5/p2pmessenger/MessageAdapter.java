@@ -1,4 +1,4 @@
-package com.example.troyb.messenger;
+package messenger.code5.p2pmessenger;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

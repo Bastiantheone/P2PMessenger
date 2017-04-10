@@ -1,6 +1,7 @@
 <resources>
-    <string name="app_name">P2PMessenger</string>
+    <string name="app_name">P2P Messenger</string>
     <string name="discover_peers">Discover Peers</string>
+    <string name="discover_groups">Discover Groups</string>
     <string name="wifip2p_enabled">Wifi P2P is enabled</string>
     <string name="wifip2p_not_enabled">Wifi P2P is not enabled</string>
     <string name="failure">failure</string>

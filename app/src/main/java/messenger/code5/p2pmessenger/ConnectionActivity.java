@@ -64,6 +64,7 @@ public class ConnectionActivity extends AppCompatActivity {
         title.setText(s);
 
         discoverButton = (Button)findViewById(R.id.discover_button);
+        discoverButton.setText(R.string.discover_peers);
         discoverButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -99,6 +100,8 @@ public class ConnectionActivity extends AppCompatActivity {
                                         public void onSuccess() {
                                             Log.d(TAG, "CreateGroup onSuccess: ");
                                             Toast.makeText(getBaseContext(),"Created Group",Toast.LENGTH_SHORT).show();
+                                            Intent intent = new Intent(getBaseContext(),MainActivity.class);
+                                            startActivity(intent);
                                         }
 
                                         @Override

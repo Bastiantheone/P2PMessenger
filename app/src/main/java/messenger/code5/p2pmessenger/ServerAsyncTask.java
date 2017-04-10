@@ -1,7 +1,12 @@
 package messenger.code5.p2pmessenger;
 
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -17,12 +22,10 @@ import java.net.Socket;
 
 public class ServerAsyncTask extends AsyncTask<Void, Void, String>{
     private static final String TAG = "ServerAsyncTask";
-    private Context context;
-    private TextView statusText;
+    private MainActivity mainActivity;
 
-    public ServerAsyncTask(Context context, View statusText){
-        this.context = context;
-        this.statusText = (TextView)statusText;
+    public ServerAsyncTask(MainActivity mainActivity){
+        this.mainActivity = mainActivity;
     }
 
     @Override
@@ -44,6 +47,20 @@ public class ServerAsyncTask extends AsyncTask<Void, Void, String>{
         Log.d(TAG, "onPostExecute: ");
         if(result!=null){
             //result contains the incoming message
+            mainActivity.addMessage(result);
+
+            //create a notification
+           /* NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
+                    .setSmallIcon(R.drawable.ic_launcher)
+                    .setContentTitle("P2P")
+                    .setContentText(result);
+
+            Intent resultIntent = new Intent(context,MessageActivity);
+
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+            stackBuilder.addParentStack(MessageActivity);
+            stackBuilder.addNextIntent(resultIntent);
+            PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT);*/
         }
     }
 }

@@ -70,6 +70,7 @@ public class JoinGroupActivity extends AppCompatActivity {
         title.setText(s);
 
         discoverButton = (Button)findViewById(R.id.discover_button);
+        discoverButton.setText(R.string.discover_groups);
         discoverButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -105,6 +106,8 @@ public class JoinGroupActivity extends AppCompatActivity {
                                         public void onSuccess() {
                                             Log.d(TAG, "CreateGroup onSuccess: ");
                                             Toast.makeText(getBaseContext(),"Created Group",Toast.LENGTH_SHORT).show();
+                                            Intent intent = new Intent(getBaseContext(),MainActivity.class);
+                                            startActivity(intent);
                                         }
 
                                         @Override
@@ -181,7 +184,7 @@ public class JoinGroupActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onMarkerClick(CircularView view, Marker marker, int position) {
+            public void onMarkerClick(CircularView view, Marker marker, final int position) {
                 if(!marker.isHighlighted()){
                     Toast.makeText(getBaseContext(),p2pDevices[position].deviceName+"\n"+
                             "click again to connect",Toast.LENGTH_SHORT).show();
@@ -195,6 +198,8 @@ public class JoinGroupActivity extends AppCompatActivity {
                         public void onSuccess() {
                             Log.d("Test", "Connect onSuccess: ");
                             //open chat window here
+                            Intent intent = new Intent(getBaseContext(),MainActivity.class);
+                            startActivity(intent);
                         }
 
                         @Override
