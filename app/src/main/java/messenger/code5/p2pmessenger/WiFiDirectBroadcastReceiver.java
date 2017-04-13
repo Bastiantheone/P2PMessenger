@@ -92,10 +92,11 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver{
         if(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)){
             NetworkInfo networkState = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
             WifiP2pGroup wifiGroup = intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_GROUP);
+            WifiP2pInfo info = intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_INFO);
             WifiP2pDevice device = intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_DEVICE);
 
             if(networkState.isConnected()){
-                mainActivity.setNetworkToReadyState(true,wifiGroup,device);
+                mainActivity.setNetworkToReadyState(true,wifiGroup,device,info);
             }
         }
     }

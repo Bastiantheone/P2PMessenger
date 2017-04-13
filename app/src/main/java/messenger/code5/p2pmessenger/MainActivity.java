@@ -6,30 +6,41 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pGroup;
+import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity  {
+    private static final String TAG = "MainActivity";
     ArrayList<Message> messages;
     private WifiP2pGroup p2pGroup;
     private WifiP2pDevice myDevice;
     private boolean connectedAndReady;
+    private ServerAsyncTask server;
 
+    private WifiP2pInfo mInfo;
     private WifiP2pManager mManager;
     private WifiP2pManager.Channel mChannel;
     private BroadcastReceiver mReceiver;
     private IntentFilter mIntentFilter;
 
     public Button sendButton;
+    private ImageButton menuButton;
     public EditText mText;
     public RecyclerView rvMessages;
 
@@ -47,8 +58,74 @@ public class MainActivity extends AppCompatActivity  {
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
 
         //start the async task to receive messages
-        ServerAsyncTask server = new ServerAsyncTask(this);
+        server = new ServerAsyncTask(this);
         server.execute();
+
+        TextView title = (TextView)findViewById(R.id.title_text_view);
+        String s = "P2PMessenger - Chat";
+        title.setText(s);
+
+        menuButton = (ImageButton)findViewById(R.id.menu_button);
+        menuButton.setOnClickListener(new View.OnClickListener() {
+                                          @Override
+                                          public void onClick(View view) {
+                                              PopupMenu menu = new PopupMenu(MainActivity.this, menuButton);
+                                              menu.getMenuInflater().inflate(R.menu.activity_menu, menu.getMenu());
+
+                                              menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                                                  @Override
+                                                  public boolean onMenuItemClick(MenuItem item) {
+                                                      switch (item.getItemId()) {
+                                                          case R.id.create_group_option:
+                                                              if (myDevice != null && !myDevice.isGroupOwner()) {
+                                                                  mManager.createGroup(mChannel, new WifiP2pManager.ActionListener() {
+                                                                      @Override
+                                                                      public void onSuccess() {
+                                                                          Log.d(TAG, "CreateGroup onSuccess: ");
+                                                                          Toast.makeText(getBaseContext(), "Created Group", Toast.LENGTH_SHORT).show();
+                                                                          Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                                                                          startActivity(intent);
+                                                                      }
+
+                                                                      @Override
+                                                                      public void onFailure(int reason) {
+                                                                          Log.d(TAG, "CreateGroup onFailure: " + reason);
+                                                                      }
+                                                                  });
+                                                              }
+                                                              return true;
+                                                          case R.id.join_group_option:
+                                                              Intent intent = new Intent(getBaseContext(), JoinGroupActivity.class);
+                                                              startActivity(intent);
+                                                              return true;
+                                                          case R.id.show_peers_option:
+                                                              Intent intentp = new Intent(getBaseContext(), ConnectionActivity.class);
+                                                              startActivity(intentp);
+                                                              return true;
+                                                          case R.id.remove_group_option:
+                                                              mManager.removeGroup(mChannel, new WifiP2pManager.ActionListener() {
+                                                                  @Override
+                                                                  public void onSuccess() {
+                                                                      Log.d(TAG, "RemoveGroup onSuccess: ");
+                                                                      Toast.makeText(getBaseContext(), "Removed Group", Toast.LENGTH_SHORT).show();
+                                                                  }
+
+                                                                  @Override
+                                                                  public void onFailure(int reason) {
+                                                                      Log.d(TAG, "RemoveGroup onFailure: " + reason);
+                                                                  }
+                                                              });
+                                                              return true;
+                                                          case R.id.settings_option:
+                                                              return true;
+                                                          default:
+                                                              return false;
+                                                      }
+                                                  }
+                                              });
+                                              menu.show();
+                                          }
+        });
 
         rvMessages = (RecyclerView) findViewById(R.id.rvMessages);
 
@@ -79,13 +156,19 @@ public class MainActivity extends AppCompatActivity  {
     }
 
     public void addMessage(String message){
+        Log.d(TAG, "addMessage: ");
         messages.add((new Message(message)));
         MessageAdapter adapter = new MessageAdapter(getBaseContext(), messages);
         rvMessages.setAdapter(adapter);
+
+        //start the async task to receive messages
+        server = new ServerAsyncTask(this);
+        server.execute();
     }
 
     public void send(String message){
-        String deviceAddress = p2pGroup.getOwner().deviceAddress;
+        Log.d(TAG, "send: ");
+        String deviceAddress = mInfo.groupOwnerAddress.getHostAddress();
         //maybe p2pGroup.getNetworkName
         Intent intent = new Intent(getBaseContext(),TransferMessageService.class);
         intent.setAction(TransferMessageService.ACTION_SEND_MESSAGE);
@@ -97,9 +180,10 @@ public class MainActivity extends AppCompatActivity  {
         startService(intent);
     }
 
-    public void setNetworkToReadyState(boolean status, WifiP2pGroup group, WifiP2pDevice device){
+    public void setNetworkToReadyState(boolean status, WifiP2pGroup group, WifiP2pDevice device, WifiP2pInfo info){
         p2pGroup = group;
         myDevice = device;
+        mInfo = info;
         connectedAndReady = status;
     }
 

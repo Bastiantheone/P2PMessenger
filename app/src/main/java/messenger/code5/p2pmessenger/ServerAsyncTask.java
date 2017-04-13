@@ -11,8 +11,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -23,6 +26,7 @@ import java.net.Socket;
 public class ServerAsyncTask extends AsyncTask<Void, Void, String>{
     private static final String TAG = "ServerAsyncTask";
     private MainActivity mainActivity;
+    private ServerSocket serverSocket;
 
     public ServerAsyncTask(MainActivity mainActivity){
         this.mainActivity = mainActivity;
@@ -30,12 +34,37 @@ public class ServerAsyncTask extends AsyncTask<Void, Void, String>{
 
     @Override
     protected String doInBackground(Void... params){
-        try{
-            ServerSocket serverSocket = new ServerSocket(8888);
+        try {
+            serverSocket = new ServerSocket();
+            serverSocket.setReuseAddress(true);
+            serverSocket.bind(new InetSocketAddress(8888));
             Socket client = serverSocket.accept();
 
             InputStream inputStream = client.getInputStream();
-            return inputStream.toString();
+            BufferedReader br = null;
+            StringBuilder sb = new StringBuilder();
+
+            String line;
+            try {
+
+                br = new BufferedReader(new InputStreamReader(inputStream));
+                while ((line = br.readLine()) != null) {
+                    sb.append(line);
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (br != null) {
+                    try {
+                        br.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            return sb.toString();
         }catch (IOException e){
             Log.e(TAG, "doInBackground: ",e );
             return null;
@@ -45,6 +74,12 @@ public class ServerAsyncTask extends AsyncTask<Void, Void, String>{
     @Override
     protected void onPostExecute(String result){
         Log.d(TAG, "onPostExecute: ");
+        try{
+            serverSocket.close();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
         if(result!=null){
             //result contains the incoming message
             mainActivity.addMessage(result);

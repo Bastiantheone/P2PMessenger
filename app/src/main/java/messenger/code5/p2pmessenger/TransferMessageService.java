@@ -42,15 +42,17 @@ public class TransferMessageService extends IntentService {
                 OutputStream outputStream = socket.getOutputStream();
                 byte[] bytes = message.getBytes();
                 outputStream.write(bytes);
+                Log.d(TAG, "onHandleIntent: ");
             }catch (IOException e){
-                Log.e(TAG, "onHandleIntent: ", e);
+                e.printStackTrace();
+                Log.e(TAG, "IOException onHandleIntent: ", e);
             }finally {
                 if(socket!=null){
                     if(socket.isConnected()){
                         try{
                             socket.close();
                         }catch (IOException e){
-                            Log.e(TAG, "onHandleIntent: ", e);
+                            Log.e(TAG, "IOException while closing onHandleIntent: ", e);
                         }
                     }
                 }
