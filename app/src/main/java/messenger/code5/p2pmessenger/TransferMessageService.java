@@ -14,7 +14,7 @@ public class TransferMessageService extends IntentService {
     private static final String TAG = "TransferMessageService";
 
     private static final int SOCKET_TIMEOUT = 5000;
-    public static final String ACTION_SEND_MESSAGE = "messenger.code5.p2pmessenger.SEND_MESSAGE";
+    public static final String ACTION_SEND_MESSAGE = "messenger.code5.p2pmessenger.FLAG_SEND_MESSAGE";
     public static final String EXTRAS_MESSAGE = "message";
     public static final String EXTRAS_ADDRESS = "go_host";
     public static final String EXTRAS_PORT = "go_port";

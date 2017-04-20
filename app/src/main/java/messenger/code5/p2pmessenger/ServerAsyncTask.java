@@ -1,20 +1,13 @@
 package messenger.code5.p2pmessenger;
 
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.View;
-import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -27,6 +20,7 @@ public class ServerAsyncTask extends AsyncTask<Void, Void, String>{
     private static final String TAG = "ServerAsyncTask";
     private MainActivity mainActivity;
     private ServerSocket serverSocket;
+    private InetAddress address;
 
     public ServerAsyncTask(MainActivity mainActivity){
         this.mainActivity = mainActivity;
@@ -41,6 +35,7 @@ public class ServerAsyncTask extends AsyncTask<Void, Void, String>{
             Socket client = serverSocket.accept();
 
             InputStream inputStream = client.getInputStream();
+            address = client.getInetAddress();
             BufferedReader br = null;
             StringBuilder sb = new StringBuilder();
 
@@ -81,10 +76,15 @@ public class ServerAsyncTask extends AsyncTask<Void, Void, String>{
             e.printStackTrace();
         }
         if(result!=null){
-            //result contains the incoming message
-            mainActivity.addMessage(result);
+            if(result.equals(MainActivity.FLAG_SEND_ADDRESS)){
+                mainActivity.addClient(address);
+            }
+            else if(result.startsWith(MainActivity.FLAG_SEND_MESSAGE)) {
+                //result contains the incoming message
+                String message = result.substring(1);
+                mainActivity.receiveMessage(message);
 
-            //create a notification
+                // FIXME create a notification something like this
            /* NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
                     .setSmallIcon(R.drawable.ic_launcher)
                     .setContentTitle("P2P")
@@ -96,6 +96,7 @@ public class ServerAsyncTask extends AsyncTask<Void, Void, String>{
             stackBuilder.addParentStack(MessageActivity);
             stackBuilder.addNextIntent(resultIntent);
             PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT);*/
+            }
         }
     }
 }
