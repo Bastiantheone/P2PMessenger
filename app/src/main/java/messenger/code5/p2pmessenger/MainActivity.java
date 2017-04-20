@@ -151,9 +151,13 @@ public class MainActivity extends AppCompatActivity  {
 
             public void onClick(View v) {
                String mesg = mText.getText().toString();
+                mText.setText("");
                 if(connectedAndReady){
                     String message = FLAG_SEND_MESSAGE + mesg;
-                    if(mInfo.isGroupOwner)sendToAll(message);
+                    if(mInfo.isGroupOwner){
+                        addMessage(mesg);
+                        sendToAll(message);
+                    }
                     else sendToOwner(message);
                 }else{
                     Toast.makeText(getBaseContext(),"Cannot currently send",Toast.LENGTH_SHORT).show();
@@ -172,7 +176,7 @@ public class MainActivity extends AppCompatActivity  {
     public void receiveMessage(String message){
         addMessage(message);
 
-        if(mInfo.isGroupOwner)sendToAll(message);
+        if(mInfo.isGroupOwner)sendToAll(FLAG_SEND_MESSAGE+message);
 
         //start the async task to receive messages
         server = new ServerAsyncTask(this);
@@ -180,7 +184,6 @@ public class MainActivity extends AppCompatActivity  {
     }
 
     public void sendToAll(String message){
-        addMessage(message);
         for(InetAddress inetAddress: clientAddresses){
             String address = inetAddress.getHostAddress();
             send(message,address);
