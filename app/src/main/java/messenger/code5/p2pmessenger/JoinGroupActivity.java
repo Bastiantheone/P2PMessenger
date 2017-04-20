@@ -77,7 +77,7 @@ public class JoinGroupActivity extends AppCompatActivity {
                 mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
                     @Override
                     public void onSuccess() {
-                        Toast.makeText(getBaseContext(),"Searching for Peers",Toast.LENGTH_LONG).show();
+                        Toast.makeText(getBaseContext(),"Searching for Groups",Toast.LENGTH_LONG).show();
                     }
 
                     @Override
@@ -198,6 +198,7 @@ public class JoinGroupActivity extends AppCompatActivity {
                         public void onSuccess() {
                             Log.d("Test", "Connect onSuccess: ");
                             //open chat window here
+                            MainActivity.justJoined = true;
                             Intent intent = new Intent(getBaseContext(),MainActivity.class);
                             startActivity(intent);
                         }

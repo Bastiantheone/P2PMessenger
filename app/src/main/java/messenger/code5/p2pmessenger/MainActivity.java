@@ -19,19 +19,23 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.net.InetAddress;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity  {
     private static final String TAG = "MainActivity";
+    public static final String FLAG_SEND_ADDRESS = "a";
+    public static final String FLAG_SEND_MESSAGE = "m";
     ArrayList<Message> messages;
     private WifiP2pGroup p2pGroup;
     private WifiP2pDevice myDevice;
     private boolean connectedAndReady;
     private ServerAsyncTask server;
+    private ArrayList<InetAddress>clientAddresses;
+    public static boolean justJoined;
 
     private WifiP2pInfo mInfo;
     private WifiP2pManager mManager;
@@ -56,6 +60,8 @@ public class MainActivity extends AppCompatActivity  {
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
+
+        clientAddresses = new ArrayList<>();
 
         //start the async task to receive messages
         server = new ServerAsyncTask(this);
@@ -145,9 +151,14 @@ public class MainActivity extends AppCompatActivity  {
 
             public void onClick(View v) {
                String mesg = mText.getText().toString();
+                mText.setText("");
                 if(connectedAndReady){
-                    send(mesg);
-                    addMessage(mesg);
+                    String message = FLAG_SEND_MESSAGE + mesg;
+                    if(mInfo.isGroupOwner){
+                        addMessage(mesg);
+                        sendToAll(message);
+                    }
+                    else sendToOwner(message);
                 }else{
                     Toast.makeText(getBaseContext(),"Cannot currently send",Toast.LENGTH_SHORT).show();
                 }
@@ -160,21 +171,37 @@ public class MainActivity extends AppCompatActivity  {
         messages.add((new Message(message)));
         MessageAdapter adapter = new MessageAdapter(getBaseContext(), messages);
         rvMessages.setAdapter(adapter);
+    }
+
+    public void receiveMessage(String message){
+        addMessage(message);
+
+        if(mInfo.isGroupOwner)sendToAll(FLAG_SEND_MESSAGE+message);
 
         //start the async task to receive messages
         server = new ServerAsyncTask(this);
         server.execute();
     }
 
-    public void send(String message){
-        Log.d(TAG, "send: ");
+    public void sendToAll(String message){
+        for(InetAddress inetAddress: clientAddresses){
+            String address = inetAddress.getHostAddress();
+            send(message,address);
+        }
+    }
+
+    public void sendToOwner(String message){
         String deviceAddress = mInfo.groupOwnerAddress.getHostAddress();
-        //maybe p2pGroup.getNetworkName
+        send(message,deviceAddress);
+    }
+
+    public void send(String message, String address){
+        Log.d(TAG, "send: ");
         Intent intent = new Intent(getBaseContext(),TransferMessageService.class);
         intent.setAction(TransferMessageService.ACTION_SEND_MESSAGE);
         Bundle bundle = new Bundle();
         bundle.putString(TransferMessageService.EXTRAS_MESSAGE,message);
-        bundle.putString(TransferMessageService.EXTRAS_ADDRESS,deviceAddress);
+        bundle.putString(TransferMessageService.EXTRAS_ADDRESS,address);
         bundle.putInt(TransferMessageService.EXTRAS_PORT,8888);
         intent.putExtras(bundle);
         startService(intent);
@@ -185,6 +212,30 @@ public class MainActivity extends AppCompatActivity  {
         myDevice = device;
         mInfo = info;
         connectedAndReady = status;
+        if(justJoined){
+            sendToOwner(FLAG_SEND_ADDRESS);
+            justJoined = false;
+        }
+    }
+
+    public void addClient(InetAddress address){
+        clientAddresses.add(address);
+
+        //start the async task to receive messages
+        server = new ServerAsyncTask(this);
+        server.execute();
+    }
+
+    public void removeClient(InetAddress address){
+        for(int i =0; i<clientAddresses.size();i++){
+            if(clientAddresses.get(i).equals(address)){
+                clientAddresses.remove(i);
+            }
+        }
+
+        //start the async task to receive messages
+        server = new ServerAsyncTask(this);
+        server.execute();
     }
 
     /* register the broadcast receiver with the intent values to be matched */
