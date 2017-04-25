@@ -171,6 +171,7 @@ public class MainActivity extends AppCompatActivity  {
         Log.d(TAG, "addMessage: ");
         messages.add((new Message(message)));
         adapter.notifyItemInserted(messages.size()-1);
+        rvMessages.smoothScrollToPosition(messages.size()-1);
     }
 
     public void receiveMessage(String message){
