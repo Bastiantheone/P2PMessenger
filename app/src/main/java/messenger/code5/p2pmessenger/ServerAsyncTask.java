@@ -80,11 +80,9 @@ public class ServerAsyncTask extends AsyncTask<Void, Void, String>{
                 mainActivity.addClient(address);
             }
             else if(result.startsWith(MainActivity.FLAG_SEND_MESSAGE)) {
-                int start = result.indexOf(MainActivity.FLAG_SEND_MESSAGE,2);
-                int id = Integer.parseInt(result.substring(1,start));
                 //result contains the incoming message
-                String message = result.substring(start+1);
-                mainActivity.receiveMessage(message,id);
+                String message = result.substring(1);
+                mainActivity.receiveMessage(message);
 
                 // FIXME create a notification something like this
            /* NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
@@ -98,10 +96,6 @@ public class ServerAsyncTask extends AsyncTask<Void, Void, String>{
             stackBuilder.addParentStack(MessageActivity);
             stackBuilder.addNextIntent(resultIntent);
             PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT);*/
-            }
-            else if(result.startsWith(MainActivity.FLAG_SEND_ID)){
-                int end = result.indexOf(MainActivity.FLAG_SEND_ID,2);
-                MainActivity.id = Integer.parseInt(result.substring(1,end));
             }
         }
     }

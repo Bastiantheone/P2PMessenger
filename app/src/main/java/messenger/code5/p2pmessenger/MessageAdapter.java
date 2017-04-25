@@ -39,7 +39,6 @@ private int previousPosition=0;
         // for any view that will be set as you render a row
         public TextView messageTextView;
         public CardView cardView;
-        private Message m;
 
         // We also create a constructor that accepts the entire item row
         // and does the view lookups to find each subview
@@ -51,16 +50,6 @@ private int previousPosition=0;
             messageTextView = (TextView) itemView.findViewById(R.id.messageTv);
             cardView = (CardView)itemView.findViewById(R.id.message_card_view);
 
-        }
-
-        public void bindMessage(Message message){
-            this.m = message;
-            messageTextView.setText(m.getMsg());
-            if(m.getId()==MainActivity.id){
-
-            }else{
-                
-            }
         }
     }
 
@@ -84,11 +73,13 @@ private int previousPosition=0;
         Message message = mMessages.get(position);
 
         // Set item views based on your views and data model
-        //TextView textView = holder.messageTextView;
+        TextView textView = holder.messageTextView;
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(textView.getLayoutParams());
+        lp.gravity= Gravity.END;
+        textView.setLayoutParams(lp);
         //EditText editText  = holder.messageEditText;
        //message.setMsg(editText.getText().toString());
-       // textView.setText(message.getMsg());
-        holder.bindMessage(message);
+        textView.setText(message.getMsg());
     }
 
     @Override

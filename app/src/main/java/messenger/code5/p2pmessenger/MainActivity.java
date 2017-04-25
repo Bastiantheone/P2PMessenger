@@ -29,7 +29,6 @@ public class MainActivity extends AppCompatActivity  {
     private static final String TAG = "MainActivity";
     public static final String FLAG_SEND_ADDRESS = "a";
     public static final String FLAG_SEND_MESSAGE = "m";
-    public static final String FLAG_SEND_ID = "i";
     ArrayList<Message> messages;
     private WifiP2pGroup p2pGroup;
     private WifiP2pDevice myDevice;
@@ -37,7 +36,6 @@ public class MainActivity extends AppCompatActivity  {
     private ServerAsyncTask server;
     private ArrayList<InetAddress>clientAddresses;
     public static boolean justJoined;
-    public static int id;
 
     private WifiP2pInfo mInfo;
     private WifiP2pManager mManager;
@@ -154,9 +152,9 @@ public class MainActivity extends AppCompatActivity  {
                String mesg = mText.getText().toString();
                 mText.setText("");
                 if(connectedAndReady){
-                    String message = FLAG_SEND_MESSAGE +id+FLAG_SEND_MESSAGE+ mesg;
+                    String message = FLAG_SEND_MESSAGE + mesg;
                     if(mInfo.isGroupOwner){
-                        addMessage(mesg,id);
+                        addMessage(mesg);
                         sendToAll(message);
                     }
                     else sendToOwner(message);
@@ -169,18 +167,18 @@ public class MainActivity extends AppCompatActivity  {
         rvMessages.setAdapter(adapter);
     }
 
-    public void addMessage(String message, int mID){
+    public void addMessage(String message){
         Log.d(TAG, "addMessage: ");
-        Message m = new Message(message,mID);
+        Message m = new Message(message);
         messages.add(m);
         adapter.notifyItemInserted(messages.size()-1);
         rvMessages.smoothScrollToPosition(messages.size()-1);
     }
 
-    public void receiveMessage(String message, int mID){
-        addMessage(message, mID);
+    public void receiveMessage(String message){
+        addMessage(message);
 
-        if(mInfo.isGroupOwner)sendToAll(FLAG_SEND_MESSAGE+mID+FLAG_SEND_MESSAGE+message);
+        if(mInfo.isGroupOwner)sendToAll(FLAG_SEND_MESSAGE+message);
 
         //start the async task to receive messages
         server = new ServerAsyncTask(this);
@@ -216,7 +214,6 @@ public class MainActivity extends AppCompatActivity  {
         myDevice = device;
         mInfo = info;
         connectedAndReady = status;
-        if(mInfo.isGroupOwner)id=0;
         if(justJoined){
             sendToOwner(FLAG_SEND_ADDRESS);
             justJoined = false;
@@ -229,8 +226,6 @@ public class MainActivity extends AppCompatActivity  {
         //start the async task to receive messages
         server = new ServerAsyncTask(this);
         server.execute();
-
-        send(FLAG_SEND_ID+clientAddresses.size()+FLAG_SEND_ID,address.getHostAddress());
     }
 
     public void removeClient(InetAddress address){
