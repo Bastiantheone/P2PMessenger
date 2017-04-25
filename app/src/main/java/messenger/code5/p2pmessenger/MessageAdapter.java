@@ -1,6 +1,8 @@
 package messenger.code5.p2pmessenger;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -36,7 +38,7 @@ private int previousPosition=0;
         // Your holder should contain a member variable
         // for any view that will be set as you render a row
         public TextView messageTextView;
-        public EditText messageEditText;
+        public CardView cardView;
 
         // We also create a constructor that accepts the entire item row
         // and does the view lookups to find each subview
@@ -46,6 +48,7 @@ private int previousPosition=0;
             super(itemView);
 
             messageTextView = (TextView) itemView.findViewById(R.id.messageTv);
+            cardView = (CardView)itemView.findViewById(R.id.message_card_view);
 
         }
     }
