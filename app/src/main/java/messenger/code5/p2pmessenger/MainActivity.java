@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity  {
     private ImageButton menuButton;
     public EditText mText;
     public RecyclerView rvMessages;
+    private MessageAdapter adapter;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -141,9 +142,7 @@ public class MainActivity extends AppCompatActivity  {
         // Set layout manager to position the items
         rvMessages.setLayoutManager(new LinearLayoutManager(this));
         // Create adapter passing in the sample user data
-        MessageAdapter adapter = new MessageAdapter(this, messages);
-        // Attach the adapter to the recyclerview to populate items
-        rvMessages.setAdapter(adapter);
+
 
         sendButton = (Button) findViewById(R.id.sendButton);
         mText = (EditText) findViewById(R.id.typeMessage) ;
@@ -164,13 +163,14 @@ public class MainActivity extends AppCompatActivity  {
                 }
            }
         });
+        adapter = new MessageAdapter(getBaseContext(), messages);
+        rvMessages.setAdapter(adapter);
     }
 
     public void addMessage(String message){
         Log.d(TAG, "addMessage: ");
         messages.add((new Message(message)));
-        MessageAdapter adapter = new MessageAdapter(getBaseContext(), messages);
-        rvMessages.setAdapter(adapter);
+        adapter.notifyItemInserted(messages.size()-1);
     }
 
     public void receiveMessage(String message){

@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:weightSum="1">
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
@@ -29,20 +31,32 @@
     </android.support.v7.widget.Toolbar>
 
     <android.support.v7.widget.RecyclerView
-    android:id="@+id/rvMessages"
-    android:layout_width="match_parent"
-    tools:context=".ShoppingCartActivity"
-    android:layout_height="300dp"/>
+        android:id="@+id/rvMessages"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_weight="0.96"
+        app:reverseLayout="true"
+        tools:context=".ShoppingCartActivity"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_weight="0.06"
+        android:gravity="bottom"
+        android:orientation="horizontal">
 
         <EditText
             android:id="@+id/typeMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:textStyle="bold|italic"
-            android:inputType="text"
+            android:layout_weight="1"
+            android:hint="Enter Text Here"
             android:imeOptions="actionDone"
-            android:hint="Enter Text Here"/>
+            android:inputType="text"
+            android:textSize="20sp"
+            android:textStyle="bold|italic"/>
+
         <Button
             android:id="@+id/sendButton"
             android:layout_width="wrap_content"
@@ -50,4 +64,6 @@
             android:text="Send"
             android:textSize="20sp"
             android:textStyle="bold|italic"/>
+    </LinearLayout>
+
 </LinearLayout>
