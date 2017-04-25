@@ -68,7 +68,7 @@ public class ServerAsyncTask extends AsyncTask<Void, Void, String>{
 
     @Override
     protected void onPostExecute(String result){
-        Log.d(TAG, "onPostExecute: ");
+        Log.d(TAG, "onPostExecute: "+result);
         try{
             serverSocket.close();
         }
@@ -80,9 +80,11 @@ public class ServerAsyncTask extends AsyncTask<Void, Void, String>{
                 mainActivity.addClient(address);
             }
             else if(result.startsWith(MainActivity.FLAG_SEND_MESSAGE)) {
+                int start = result.indexOf(MainActivity.FLAG_SEND_MESSAGE,1);
+                int id = Integer.parseInt(result.substring(1,start));
                 //result contains the incoming message
-                String message = result.substring(1);
-                mainActivity.receiveMessage(message);
+                String message = result.substring(start+1);
+                mainActivity.receiveMessage(message,id);
 
                 // FIXME create a notification something like this
            /* NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
@@ -96,6 +98,11 @@ public class ServerAsyncTask extends AsyncTask<Void, Void, String>{
             stackBuilder.addParentStack(MessageActivity);
             stackBuilder.addNextIntent(resultIntent);
             PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT);*/
+            }
+            else if(result.startsWith(MainActivity.FLAG_SEND_ID)){
+                int end = result.indexOf(MainActivity.FLAG_SEND_ID,1);
+                MainActivity.id = Integer.parseInt(result.substring(1,end));
+                Log.d(TAG, "onPostExecute: "+MainActivity.id);
             }
         }
     }
