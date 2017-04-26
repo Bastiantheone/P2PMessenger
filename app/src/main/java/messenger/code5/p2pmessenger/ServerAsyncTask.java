@@ -77,9 +77,11 @@ public class ServerAsyncTask extends AsyncTask<Void, Void, String>{
         }
         if(result!=null){
             if(result.equals(MainActivity.FLAG_SEND_ADDRESS)){
+                // new client sends an empty message to retrieve the address
                 mainActivity.addClient(address);
             }
             else if(result.startsWith(MainActivity.FLAG_SEND_MESSAGE)) {
+                // set start and end flags, because ID could be double digit
                 int start = result.indexOf(MainActivity.FLAG_SEND_MESSAGE,1);
                 int id = Integer.parseInt(result.substring(1,start));
                 //result contains the incoming message
@@ -100,9 +102,8 @@ public class ServerAsyncTask extends AsyncTask<Void, Void, String>{
             PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT);*/
             }
             else if(result.startsWith(MainActivity.FLAG_SEND_ID)){
-                int end = result.indexOf(MainActivity.FLAG_SEND_ID,1);
-                MainActivity.id = Integer.parseInt(result.substring(1,end));
-                Log.d(TAG, "onPostExecute: "+MainActivity.id);
+                int id = Integer.parseInt(result.substring(1));
+                mainActivity.addID(id);
             }
         }
     }

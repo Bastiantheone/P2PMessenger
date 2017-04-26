@@ -223,16 +223,25 @@ public class MainActivity extends AppCompatActivity  {
         }
     }
 
+    public void addID(int nID){
+        id = nID;
+
+        //start the async task to receive messages
+        server = new ServerAsyncTask(this);
+        server.execute();
+    }
+
     public void addClient(InetAddress address){
         clientAddresses.add(address);
 
         //start the async task to receive messages
         server = new ServerAsyncTask(this);
         server.execute();
-        send(FLAG_SEND_ID+clientAddresses.size()+FLAG_SEND_ID,address.getHostAddress());
 
+        send(FLAG_SEND_ID+clientAddresses.size(),address.getHostAddress());
     }
 
+    // Leave it out because of complications with ID?
     public void removeClient(InetAddress address){
         for(int i =0; i<clientAddresses.size();i++){
             if(clientAddresses.get(i).equals(address)){
